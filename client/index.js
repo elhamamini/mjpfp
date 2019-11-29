@@ -67,7 +67,9 @@ class MonthPage extends React.Component {
                     type={'text'}
                     onChange={e => this.setState({ value: e.target.value })}
                   />
-                  <button onClick={() => createEvents(this.state.value)}>
+                  <button
+                    onClick={() => createEvents(this.state.value, day.id)}
+                  >
                     create
                   </button>
                 </form>

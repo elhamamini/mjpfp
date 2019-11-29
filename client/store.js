@@ -26,12 +26,11 @@ const reducer = combineReducers({
     return state;
   },
   events: (state = [], action) => {
-      if(action.type===SET_EVENT){
-          state=action.events
-      }
-      else if(action.type===CREATE_EVENT){
-          state=[...state,action.event]
-      }
+    if (action.type === SET_EVENT) {
+      state = action.events;
+    } else if (action.type === CREATE_EVENT) {
+      state = [...state, action.event];
+    }
     return state;
   }
 });
@@ -60,9 +59,9 @@ const getEvent = event => {
     event
   };
 };
-const createEvents = text => {
-  axios
-    .post(`/api/events`, text)
+const createEvents = (text, id) => {
+  return axios
+    .post(`/api/events`, { task: text, dayId: id })
     .then(response => store.dispatch(getEvent(response.data)))
     .catch(e => console.log(e));
 };
@@ -97,4 +96,4 @@ const fetchDays = () => {
     .catch(e => console.log(e));
 };
 const store = createStore(reducer);
-export { store, fetchDays, fetchMonths, fetchYears, createEvents  fetchEvents};
+export { store, fetchDays, fetchMonths, fetchYears, createEvents, fetchEvents };

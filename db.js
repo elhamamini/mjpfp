@@ -33,7 +33,7 @@ const Day = conn.define('day', {
   }
 });
 const Event = conn.define('event', {
-  task: { type: Sequelize.TEXT }
+  task: { type: Sequelize.STRING }
   // time: Sequelize.TIME
 });
 Event.belongsTo(Day);

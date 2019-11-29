@@ -16,7 +16,8 @@ app.get('/api/days', (req, res, next) => {
 });
 app.post('/api/events', (req, res, next) => {
   const newEvent = {
-    task: req.body.task
+    task: req.body.task,
+    dayId: req.body.dayId
   };
   db.Event.create(newEvent)
     .then(event => res.send(event))
