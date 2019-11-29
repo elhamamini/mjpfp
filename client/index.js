@@ -50,6 +50,7 @@ class MonthPage extends React.Component {
   render() {
     const { months, days, years, events } = this.props;
     console.log(events);
+    console.log(this.state.value);
 
     return (
       <div>
@@ -67,9 +68,7 @@ class MonthPage extends React.Component {
                     type={'text'}
                     onChange={e => this.setState({ value: e.target.value })}
                   />
-                  <button
-                    onClick={() => createEvents(this.state.value, day.id)}
-                  >
+                  <button onClick={() => createEvents(this.state.value)}>
                     create
                   </button>
                 </form>

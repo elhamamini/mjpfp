@@ -8,18 +8,22 @@ app.get('/', (req, res, next) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 app.get('/api/days', (req, res, next) => {
-  db.Day.findAll({
-    include: [db.Event]
-  })
+  db.Day
+    .findAll
+    //       {
+    //     include: [db.Event]
+    //   }
+    ()
     .then(days => res.send(days))
     .catch(next);
 });
 app.post('/api/events', (req, res, next) => {
-  const newEvent = {
-    task: req.body.task,
-    dayId: req.body.dayId
-  };
-  db.Event.create(newEvent)
+  //   const newEvent = {
+  //     task: req.body.task
+  //     // dayId: req.body.dayId
+  //   };
+  console.log('eee', req.body);
+  db.Event.create({ ...req.body })
     .then(event => res.send(event))
     .catch(next);
 });
@@ -29,10 +33,14 @@ app.get('/api/events', (req, res, next) => {
     .catch(next);
 });
 app.get('/api/years/:id', (req, res, next) => {
-  db.Year.findByPk(req.params.id).then(year => res.send(year));
+  db.Year.findByPk(req.params.id)
+    .then(year => res.send(year))
+    .catch(next);
 });
 app.get('/api/months/:id', (req, res, next) => {
-  db.Month.findByPk(req.params.id).then(month => res.send(month));
+  db.Month.findByPk(req.params.id)
+    .then(month => res.send(month))
+    .catch(next);
 });
 db.syncAndSeed().then(() => {
   app.listen(PORT, () => {

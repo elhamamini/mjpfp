@@ -59,9 +59,10 @@ const getEvent = event => {
     event
   };
 };
-const createEvents = (text, id) => {
+const createEvents = text => {
+  console.log(text);
   return axios
-    .post(`/api/events`, { task: text, dayId: id })
+    .post('/api/events', text)
     .then(response => store.dispatch(getEvent(response.data)))
     .catch(e => console.log(e));
 };
