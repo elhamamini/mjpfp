@@ -23,10 +23,18 @@ app.post('/api/events', (req, res, next) => {
   //     // dayId: req.body.dayId
   //   };
   console.log('eee', req.body);
+
   db.Event.create({ ...req.body })
-    .then(event => res.send(event))
-    .catch(next);
+    .then(event => {
+      res.statusCode = 200;
+      res.send(event);
+    })
+    .catch(e => {
+      res.statusCode = 400;
+      next(e);
+    });
 });
+
 app.get('/api/events', (req, res, next) => {
   db.Event.findAll()
     .then(events => res.send(events))

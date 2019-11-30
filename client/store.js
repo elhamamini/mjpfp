@@ -62,7 +62,7 @@ const getEvent = event => {
 const createEvents = text => {
   console.log(text);
   return axios
-    .post('/api/events', text)
+    .post('/api/events', { task: text })
     .then(response => store.dispatch(getEvent(response.data)))
     .catch(e => console.log(e));
 };

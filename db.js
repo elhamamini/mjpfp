@@ -38,103 +38,72 @@ const Event = conn.define('event', {
 });
 Event.belongsTo(Day);
 Day.hasMany(Event);
-Day.belongsTo(Month);
-Month.hasMany(Day);
-Day.belongsTo(Year);
-Year.hasMany(Day);
+Event.belongsTo(Month);
+Month.hasMany(Event);
+Event.belongsTo(Year);
+Year.hasMany(Event);
 const syncAndSeed = async () => {
   await conn.sync({ force: true });
   const years = [{ num: 2020 }, { num: 2021 }, { num: 2022 }];
-  //   const ['2020','2021','2022']=
+
+  // const [yearOne,yearTwo,yearThree]=
   await Promise.all(years.map(year => Year.create(year)));
-  const [
-    jan,
-    feb,
-    mar,
-    apr,
-    may,
-    jun,
-    jul,
-    aug,
-    sep,
-    oct,
-    nov,
-    dec
-  ] = await Promise.all(months.map(month => Month.create(month)));
-  const days = () => {
-    const arr = [];
-    for (let i = 1; i <= 30; i++) {
-      arr.push({
-        day: i
-      });
-    }
-    return arr;
-  };
-  // const days = [
-  //   1,
-  //   2,
-  //   3,
-  //   4,
-  //   5,
-  //   6,
-  //   7,
-  //   8,
-  //   9,
-  //   10,
-  //   11,
-  //   12,
-  //   13,
-  //   14,
-  //   15,
-  //   16,
-  //   17,
-  //   18,
-  //   19,
-  //   20,
-  //   21,
-  //   22,
-  //   23,
-  //   24,
-  //   25,
-  //   26,
-  //   27,
-  //   28,
-  //   29,
-  //   30
-  // ];
-  const [
-    one,
-    two,
-    three,
-    four,
-    five,
-    six,
-    seven,
-    eight,
-    nine,
-    ten,
-    eleven,
-    twelve,
-    thirteen,
-    fourteen,
-    fifeteen,
-    sixtheen,
-    seventeen,
-    eighteen,
-    nineteen,
-    tewnty,
-    tewntyone,
-    tewntytwo,
-    tewntythree,
-    tewntyfour,
-    twentyfive,
-    twentysix,
-    twentyseven,
-    twentyeight,
-    twentynine,
-    thirty
-  ] = await Promise.all(days().map(day => Day.create(day)));
-  await Promise.all([Event.create({ task: 'MY BIRTHDAY', dayId: two.id })]);
+
+  const allMonths = await Promise.all(months.map(month => Month.create(month)));
+  // const days = () => {
+  //   const arr = [];
+  //   for (let i = 1; i <= 30; i++) {
+  //     arr.push({
+  //       day: i
+  //     });
+  //   }
+  //   arr.sort((firstElement, nextElement) => {
+  //     return firstElement.day - nextElement.day;
+  //   });
+  //   return arr;
+  // };
+  const days = [
+    { day: 1 },
+    { day: 2 },
+    { day: 3 },
+    { day: 4 },
+    { day: 5 },
+    { day: 6 },
+    { day: 7 },
+    { day: 8 },
+    { day: 9 },
+    { day: 10 },
+    { day: 11 },
+    { day: 12 },
+    { day: 13 },
+    { day: 14 },
+    { day: 15 },
+    { day: 16 },
+    { day: 17 },
+    { day: 18 },
+    { day: 19 },
+    { day: 20 },
+    { day: 21 },
+    { day: 22 },
+    { day: 23 },
+    { day: 24 },
+    { day: 25 },
+    { day: 26 },
+    { day: 27 },
+    { day: 28 },
+    { day: 29 },
+    { day: 30 }
+  ];
+
+  const allDays = await Promise.all(days.map(day => Day.create(day)));
+  await Promise.all([
+    Event.create({
+      task: 'MY BIRTHDAY',
+      dayId: allDays[1].id,
+      monthId: allMonths[0].id
+      // yearId: yearOne.id
+    })
+  ]);
 };
 
 module.exports = { syncAndSeed, Day, Year, Month, Event };

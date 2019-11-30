@@ -1,4 +1,5 @@
 import React from 'react';
+import Popup from 'reactjs-popup';
 import ReactDOM from 'react-dom';
 import { HashRouter, Route, Link, NavLink } from 'react-router-dom';
 
@@ -11,6 +12,7 @@ import {
   fetchEvents
 } from './store.js';
 import axios from 'axios';
+
 let countForYears = 1;
 let countForMonths = 1;
 const nextPage = () => {
@@ -33,24 +35,31 @@ const prevPage = () => {
   }
   fetchMonths(countForMonths);
 };
-// const createEvent = text => {
-//   console.log('44444', text);
-// };
 
 class MonthPage extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      value: ''
+      value: '',
+      selected: false
     };
   }
-  // createEvent = text => {
-  //   console.log('44444', text);
-  // };
+
   render() {
     const { months, days, years, events } = this.props;
     console.log(events);
+
     console.log(this.state.value);
+    const yearId = years.id;
+    const monthId = months.id;
+    const _days = days.map(day => {
+      return {
+        ...day,
+        events: events.filter(
+          event => event.dayId === day.id && event.monthId === monthId
+        )
+      };
+    });
 
     return (
       <div>
@@ -59,11 +68,26 @@ class MonthPage extends React.Component {
 
         <div className={'grid'}>
           {days &&
-            days.map(day => (
+            _days.map(day => (
               <div key={day.id}>
                 {months.name}
                 {day.day}
-                <form onSubmit={e => e.preventDefault()}>
+                <div>
+                  {day.events &&
+                    day.events.map(event => <div>{event.task}</div>)}
+                </div>
+                <div
+                  className={'squer'}
+                  onClick={() => {
+                    this.state.selected = true;
+                  }}
+                >
+                  +
+                </div>
+                <form
+                  className={this.state.selected ? '' : ''}
+                  onSubmit={e => e.preventDefault()}
+                >
                   <input
                     type={'text'}
                     onChange={e => this.setState({ value: e.target.value })}
@@ -79,6 +103,7 @@ class MonthPage extends React.Component {
     );
   }
 }
+
 class App extends React.Component {
   constructor() {
     super();
