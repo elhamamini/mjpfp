@@ -1,6 +1,8 @@
 import React from 'react';
-import Popup from 'reactjs-popup';
+
 import ReactDOM from 'react-dom';
+import Popup from './popup.js';
+// import Pop from './mainPop.js';
 import { HashRouter, Route, Link, NavLink } from 'react-router-dom';
 
 import {
@@ -9,9 +11,11 @@ import {
   fetchMonths,
   fetchYears,
   createEvents,
-  fetchEvents
+  fetchEvents,
+  deleteEvent
 } from './store.js';
 import axios from 'axios';
+let hidden = 'hidden';
 
 let countForYears = 1;
 let countForMonths = 1;
@@ -41,16 +45,33 @@ class MonthPage extends React.Component {
     super();
     this.state = {
       value: '',
-      selected: false
+      selected: false,
+      show: false,
+      evId: '',
+      id: '',
+      showPopup: false
+      // showPop: false
     };
+    this.togglePopup = this.togglePopup.bind(this);
   }
 
+  togglePopup(e) {
+    console.log('****** target', e.target);
+    this.setState(prevState => ({
+      ...prevState,
+      showPopup: !prevState.showPopup
+    }));
+  }
+  // togglePop() {
+  //   this.setState({ showPop: !this.state.showPop });
+  // }
   render() {
     const { months, days, years, events } = this.props;
-    console.log(events);
+    console.log(this.state.selected);
 
     console.log(this.state.value);
     const yearId = years.id;
+    console.log('year', yearId);
     const monthId = months.id;
     const _days = days.map(day => {
       return {
@@ -60,13 +81,13 @@ class MonthPage extends React.Component {
         )
       };
     });
-
+    console.log('events', events);
     return (
       <div>
         <h1>{years.num}</h1>
         <h2>{months.name}</h2>
 
-        <div className={'grid'}>
+        <div className="grid">
           {days &&
             _days.map(day => (
               <div key={day.id}>
@@ -74,28 +95,75 @@ class MonthPage extends React.Component {
                 {day.day}
                 <div>
                   {day.events &&
-                    day.events.map(event => <div>{event.task}</div>)}
+                    day.events.map(event => (
+                      <div key={event.id} onClick={this.togglePopup}>
+                        {event.task}
+
+                        {/* {this.state.showPopup === true ? (
+                          <Popup
+                            eventId={event.id}
+                            value={this.state.value}
+                            select={this.state.selected}
+                            closePopup={this.togglePopup}
+                          />
+                        ) : (
+                          ''
+                        )} */}
+                      </div>
+                    ))}
                 </div>
                 <div
                   className={'squer'}
+                  // onClick={this.togglePop.bind(this)}
                   onClick={() => {
-                    this.state.selected = true;
+                    this.setState({
+                      selected: !this.state.selected,
+                      id: day.id
+                    });
                   }}
                 >
                   +
                 </div>
-                <form
-                  className={this.state.selected ? '' : ''}
-                  onSubmit={e => e.preventDefault()}
-                >
-                  <input
-                    type={'text'}
-                    onChange={e => this.setState({ value: e.target.value })}
+
+                {this.state.showPopup === true ? (
+                  <Popup
+                    eventId={event.id}
+                    value={this.state.value}
+                    select={this.state.selected}
+                    closePopup={this.togglePopup}
                   />
-                  <button onClick={() => createEvents(this.state.value)}>
-                    create
-                  </button>
-                </form>
+                ) : (
+                  ''
+                )}
+
+                {/* {this.state.showPop ? (
+                  <Pop
+                    closePop={this.togglePop.bind(this)}
+                    dayId={day.id}
+                    monthId={monthId}
+                    yearId={yearId}
+                  />
+                ) : (
+                  ''
+                )} */}
+                {day.id === this.state.id && (
+                  <form
+                    className={this.state.selected ? '' : hidden}
+                    onSubmit={e => e.preventDefault()}
+                  >
+                    <input
+                      type={'text'}
+                      onChange={e => this.setState({ value: e.target.value })}
+                    />
+                    <button
+                      onClick={() =>
+                        createEvents(this.state.value, day.id, monthId, yearId)
+                      }
+                    >
+                      create
+                    </button>
+                  </form>
+                )}
               </div>
             ))}
         </div>
@@ -135,4 +203,4 @@ class App extends React.Component {
   }
 }
 ReactDOM.render(<App />, document.querySelector('#root'));
-export default App;
+export default { App, MonthPage };

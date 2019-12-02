@@ -49,7 +49,9 @@ const syncAndSeed = async () => {
   // const [yearOne,yearTwo,yearThree]=
   await Promise.all(years.map(year => Year.create(year)));
 
-  const allMonths = await Promise.all(months.map(month => Month.create(month)));
+  const allMonths = await Promise.all(
+    months.map((month, idx) => Month.create({ id: idx + 1, ...month }))
+  );
   // const days = () => {
   //   const arr = [];
   //   for (let i = 1; i <= 30; i++) {

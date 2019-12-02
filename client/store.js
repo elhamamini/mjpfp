@@ -5,6 +5,8 @@ const SET_MONTHS = 'SET_MONTHS';
 const SET_DAYS = 'SET_DAYS';
 const SET_EVENT = 'SET_EVENT';
 const CREATE_EVENT = 'CREATE_EVENT';
+const DELETE_EVENT = 'DELETE_EVENT';
+const EDIT_EVENT = 'EDIT_EVENT';
 
 const reducer = combineReducers({
   years: (state = [], action) => {
@@ -30,6 +32,14 @@ const reducer = combineReducers({
       state = action.events;
     } else if (action.type === CREATE_EVENT) {
       state = [...state, action.event];
+    } else if (action.type === DELETE_EVENT) {
+      state = state.filter(event => event.id !== action.event.id);
+    } else if (action.type === EDIT_EVENT) {
+      state = [
+        ...state.slice(0, action.event.id),
+        action.event,
+        ...state.slice(action.event.id)
+      ];
     }
     return state;
   }
@@ -59,11 +69,31 @@ const getEvent = event => {
     event
   };
 };
-const createEvents = text => {
+const createEvents = (text, dId, mId, yId) => {
   console.log(text);
   return axios
-    .post('/api/events', { task: text })
-    .then(response => store.dispatch(getEvent(response.data)))
+    .post('/api/events', { task: text, dayId: dId, monthId: mId, yearId: yId })
+    .then(response => {
+      console.log(response.data);
+      store.dispatch(getEvent(response.data));
+    })
+    .catch(e => console.log(e));
+};
+const editEvent = (id, text) => {
+  return axios
+    .put(`/api/events/${id}`, { task: text })
+    .then(response =>
+      store.dispatch({ type: EDIT_EVENT, event: response.data })
+    )
+    .catch(e => console.log(e));
+};
+const deleteEvent = idx => {
+  console.log(idx);
+  return axios
+    .delete(`/api/events/${idx}`)
+    .then(response =>
+      store.dispatch({ type: DELETE_EVENT, event: response.data })
+    )
     .catch(e => console.log(e));
 };
 const getAllEvents = events => {
@@ -97,4 +127,13 @@ const fetchDays = () => {
     .catch(e => console.log(e));
 };
 const store = createStore(reducer);
-export { store, fetchDays, fetchMonths, fetchYears, createEvents, fetchEvents };
+export {
+  store,
+  fetchDays,
+  fetchMonths,
+  fetchYears,
+  createEvents,
+  fetchEvents,
+  deleteEvent,
+  editEvent
+};
